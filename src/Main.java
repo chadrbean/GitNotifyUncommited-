@@ -14,10 +14,8 @@ public class Main {
 		try {
 			checkUnCommited(gotDirLs, path);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -40,8 +38,17 @@ public class Main {
 	
 	private static void checkUnCommited(List<String> gotDirLs, String path) throws IOException, InterruptedException {
 		for (String i : gotDirLs) {
-			System.out.println(path+i);
-			new ProcessBuilder("git", "-C", path+i, "status").inheritIO().start().waitFor();
+
+			ProcessBuilder pb = new ProcessBuilder("git", "-C", path+i, "status");
+			Process process = pb.start();
+			String result = new String(process.getInputStream().readAllBytes());
+			System.out.println();
+	        if (!(result.contains("up to date"))) {
+	        	System.out.print("Out Of Data Path " + (path+i));
+	        } 
+	        if (result.contains("Changes not staged for commit")) {
+	        	System.out.print("Changes not staged for commit " + (path+i));
+	        } 
 		}
 	}
 }
